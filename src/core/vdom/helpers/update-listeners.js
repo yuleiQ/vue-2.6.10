@@ -49,12 +49,12 @@ export function createFnInvoker (fns: Function | Array<Function>, vm: ?Component
   invoker.fns = fns
   return invoker
 }
-
+// 比较新旧事件的列表来确定事件的添加和移除以及事件修饰符的处理
 export function updateListeners (
-  on: Object,
-  oldOn: Object,
-  add: Function,
-  remove: Function,
+  on: Object, // 新
+  oldOn: Object, // 旧
+  add: Function, // 增加
+  remove: Function, // 移除
   createOnceHandler: Function,
   vm: Component
 ) {

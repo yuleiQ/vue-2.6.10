@@ -15,6 +15,8 @@ const idToTemplate = cached(id => {
 })
 
 const mount = Vue.prototype.$mount
+// 扩展默认$mount方法:处理template或el选项
+// 优先级是render=>template=>el
 Vue.prototype.$mount = function (
   el?: string | Element,
   hydrating?: boolean

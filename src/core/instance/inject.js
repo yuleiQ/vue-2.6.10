@@ -49,8 +49,10 @@ export function resolveInject (inject: any, vm: Component): ?Object {
       // #6574 in case the inject object is observed...
       if (key === '__ob__') continue
       const provideKey = inject[key].from
+      // 当前实例
       let source = vm
       while (source) {
+        // source._provided内保存的就是当前provide提供的值
         if (source._provided && hasOwn(source._provided, provideKey)) {
           result[key] = source._provided[provideKey]
           break

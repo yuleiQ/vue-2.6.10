@@ -30,19 +30,20 @@ export function setActiveInstance(vm: Component) {
 }
 
 export function initLifecycle (vm: Component) {
+  // 合并的属性
   const options = vm.$options
 
   // locate first non-abstract parent
   let parent = options.parent
-  if (parent && !options.abstract) {
+  if (parent && !options.abstract) { //   找到第一个非抽象父组件
     while (parent.$options.abstract && parent.$parent) {
       parent = parent.$parent
     }
     parent.$children.push(vm)
   }
 
-  vm.$parent = parent
-  vm.$root = parent ? parent.$root : vm
+  vm.$parent = parent // 找到赋值
+  vm.$root = parent ? parent.$root : vm //  让每一个子组件的$root属性都是根组件
 
   vm.$children = []
   vm.$refs = {}
@@ -56,6 +57,7 @@ export function initLifecycle (vm: Component) {
 }
 
 export function lifecycleMixin (Vue: Class<Component>) {
+  // 执行更新，会把vdom 转化成dom
   Vue.prototype._update = function (vnode: VNode, hydrating?: boolean) {
     const vm: Component = this
     const prevEl = vm.$el

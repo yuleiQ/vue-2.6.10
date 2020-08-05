@@ -16,7 +16,7 @@ export function initMixin (Vue: Class<Component>) {
   Vue.prototype._init = function (options?: Object) {
     const vm: Component = this
     // a uid
-    vm._uid = uid++
+    vm._uid = uid++ // 唯一标识
 
     let startTag, endTag
     /* istanbul ignore if */
@@ -35,6 +35,7 @@ export function initMixin (Vue: Class<Component>) {
       // internal component options needs special treatment.
       initInternalComponent(vm, options)
     } else {
+      // 合并options
       vm.$options = mergeOptions(
         resolveConstructorOptions(vm.constructor),
         options || {},
@@ -49,12 +50,18 @@ export function initMixin (Vue: Class<Component>) {
     }
     // expose real self
     vm._self = vm
+    // 确认组件的父子关系和初始化某些实例属性  $parent,$root,$children,$refs
     initLifecycle(vm)
+    // 处理父组件传递的事件和回调
     initEvents(vm)
+    // $slots,$scopedSlots,_c,$createElement
     initRender(vm)
     callHook(vm, 'beforeCreate')
+    // 获取注入数据
     initInjections(vm) // resolve injections before data/props
+    // 初始化props，methods，data，computed，watch
     initState(vm)
+    // 提供数据注入
     initProvide(vm) // resolve provide after data/props
     callHook(vm, 'created')
 
