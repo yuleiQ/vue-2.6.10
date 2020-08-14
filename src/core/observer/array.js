@@ -7,7 +7,7 @@ import { def } from '../util/index'
 // 获取数组原型
 const arrayProto = Array.prototype
 export const arrayMethods = Object.create(arrayProto)
-
+// 7种数组方法
 const methodsToPatch = [
   'push',
   'pop',

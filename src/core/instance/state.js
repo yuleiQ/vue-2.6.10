@@ -48,8 +48,10 @@ export function proxy (target: Object, sourceKey: string, key: string) {
 export function initState (vm: Component) {
   vm._watchers = []
   const opts = vm.$options
+  // 属性初始化
   if (opts.props) initProps(vm, opts.props)
   if (opts.methods) initMethods(vm, opts.methods)
+  // 数据响应式
   if (opts.data) {
     initData(vm)
   } else {
@@ -151,7 +153,7 @@ function initData (vm: Component) {
     }
   }
   // observe data
-  // 响应式操作
+  // 响应式操作！！！！！！！！！！！
   observe(data, true /* asRootData */)
 }
 
@@ -345,26 +347,31 @@ export function stateMixin (Vue: Class<Component>) {
 
   Vue.prototype.$set = set
   Vue.prototype.$delete = del
-
+  
+  // $watch
   Vue.prototype.$watch = function (
     expOrFn: string | Function,
     cb: any,
     options?: Object
   ): Function {
     const vm: Component = this
+      // 是否object
     if (isPlainObject(cb)) {
+      // 直接创建
       return createWatcher(vm, expOrFn, cb, options)
     }
     options = options || {}
     options.user = true
+    // 实例
     const watcher = new Watcher(vm, expOrFn, cb, options)
-    if (options.immediate) {
+    if (options.immediate) { // 立即调用
       try {
         cb.call(vm, watcher.value)
       } catch (error) {
         handleError(error, vm, `callback for immediate watcher "${watcher.expression}"`)
       }
     }
+    // 取消监听
     return function unwatchFn () {
       watcher.teardown()
     }

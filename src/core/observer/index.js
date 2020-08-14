@@ -48,6 +48,7 @@ export class Observer {
     this.vmCount = 0
     // 设置__ob__属性，引用当前Observer实例
     def(value, '__ob__', this)
+    // 根据数据类型执行对应的响应化操作
     if (Array.isArray(value)) {
       // 替换数组原型
       if (hasProto) {
@@ -134,6 +135,7 @@ export function observe (value: any, asRootData: ?boolean): Observer | void {
   if (asRootData && ob) {
     ob.vmCount++
   }
+  // 返回一个observer实例
   return ob
 }
 
@@ -219,11 +221,14 @@ export function set (target: Array<any> | Object, key: any, val: any): any {
   ) {
     warn(`Cannot set reactive property on undefined, null, or primitive value: ${(target: any)}`)
   }
+  // 数组
   if (Array.isArray(target) && isValidArrayIndex(key)) {
+    // 安全操作
     target.length = Math.max(target.length, key)
     target.splice(key, 1, val)
     return val
   }
+  // 对象
   if (key in target && !(key in Object.prototype)) {
     target[key] = val
     return val
@@ -241,6 +246,7 @@ export function set (target: Array<any> | Object, key: any, val: any): any {
     return val
   }
   defineReactive(ob.value, key, val)
+  // 通知组件更新
   ob.dep.notify()
   return val
 }
@@ -254,6 +260,7 @@ export function del (target: Array<any> | Object, key: any) {
   ) {
     warn(`Cannot delete reactive property on undefined, null, or primitive value: ${(target: any)}`)
   }
+  // 数组
   if (Array.isArray(target) && isValidArrayIndex(key)) {
     target.splice(key, 1)
     return
@@ -266,6 +273,7 @@ export function del (target: Array<any> | Object, key: any) {
     )
     return
   }
+  // 对象
   if (!hasOwn(target, key)) {
     return
   }
@@ -273,6 +281,7 @@ export function del (target: Array<any> | Object, key: any) {
   if (!ob) {
     return
   }
+  // 通知更新
   ob.dep.notify()
 }
 
