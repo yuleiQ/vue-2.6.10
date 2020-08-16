@@ -13,9 +13,9 @@ const idToTemplate = cached(id => {
   const el = query(id)
   return el && el.innerHTML
 })
-
+// 保存原来的$mount
 const mount = Vue.prototype.$mount
-// 扩展默认$mount方法:处理template或el选项
+// 覆盖默认的$mount方法:处理template或el选项
 // 优先级是render=>template=>el
 Vue.prototype.$mount = function (
   el?: string | Element,
@@ -23,14 +23,14 @@ Vue.prototype.$mount = function (
 ): Component {
   el = el && query(el)
 
-  /* istanbul ignore if */
+  /* istanbul ignore if */ // 跳过这段代码
   if (el === document.body || el === document.documentElement) {
     process.env.NODE_ENV !== 'production' && warn(
       `Do not mount Vue to <html> or <body> - mount to normal elements instead.`
     )
     return this
   }
-
+  // 解析options
   const options = this.$options
   // resolve template/el and convert to render function
   if (!options.render) {
@@ -58,12 +58,13 @@ Vue.prototype.$mount = function (
     } else if (el) {
       template = getOuterHTML(el)
     }
+    // 模板解析 如果存在执行编译
     if (template) {
       /* istanbul ignore if */
       if (process.env.NODE_ENV !== 'production' && config.performance && mark) {
         mark('compile')
       }
-
+      // 编译得到渲染函数
       const { render, staticRenderFns } = compileToFunctions(template, {
         outputSourceRange: process.env.NODE_ENV !== 'production',
         shouldDecodeNewlines,
@@ -81,6 +82,7 @@ Vue.prototype.$mount = function (
       }
     }
   }
+  // 执行挂载
   return mount.call(this, el, hydrating)
 }
 
