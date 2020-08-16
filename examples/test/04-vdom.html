@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Vue源码剖析</title>
+    <script src="../../dist/vue.js"></script>
+</head>
+
+<body>
+    <div id="demo">
+        <h1>虚拟DOM</h1>
+        <p>{{foo}}</p>
+    </div>
+    <script>
+        // 创建实例
+        const app = new Vue({
+            el: '#demo',
+            data: { foo: 'foo' },
+            mounted() {
+                setTimeout(() => {
+                    this.foo = 'fooooo'
+                }, 1000);
+            }
+        });
+        // _render计算虚拟dom _update则是把_render得到的虚拟dom转成真实dom
+    </script>
+</body>
+
+</html>

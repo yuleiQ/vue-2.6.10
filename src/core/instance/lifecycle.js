@@ -73,6 +73,7 @@ export function lifecycleMixin (Vue: Class<Component>) {
     } else {
       // 更新
       // updates
+      // 两个虚拟dom的比较
       vm.$el = vm.__patch__(prevVnode, vnode)
     }
     restoreActiveInstance()
