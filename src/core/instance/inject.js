@@ -3,12 +3,12 @@
 import { hasOwn } from 'shared/util'
 import { warn, hasSymbol } from '../util/index'
 import { defineReactive, toggleObserving } from '../observer/index'
-
+// 初始化provide为子组件提供依赖
 export function initProvide (vm: Component) {
   const provide = vm.$options.provide
   if (provide) {
     vm._provided = typeof provide === 'function'
-      ? provide.call(vm)
+      ? provide.call(vm) // 如果是函数的话，就将执行结果得到赋值给私有属性vm._provided，故子组件在初始化inject时就可以访问到父组件提供的依赖了
       : provide
   }
 }
@@ -42,7 +42,7 @@ export function resolveInject (inject: any, vm: Component): ?Object {
     const result = Object.create(null)
     const keys = hasSymbol
       ? Reflect.ownKeys(inject)
-      : Object.keys(inject)
+      : Object.keys(inject) // 这是是对象的原因是传进来的inject可能是数组也可能是对象，前面经过合并后，统一参数格式化为对象
 
     for (let i = 0; i < keys.length; i++) {
       const key = keys[i]
@@ -57,6 +57,7 @@ export function resolveInject (inject: any, vm: Component): ?Object {
           result[key] = source._provided[provideKey]
           break
         }
+        // 父组件查找
         source = source.$parent
       }
       if (!source) {

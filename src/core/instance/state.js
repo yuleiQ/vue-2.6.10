@@ -64,15 +64,15 @@ export function initState (vm: Component) {
 }
 
 function initProps (vm: Component, propsOptions: Object) {
-  const propsData = vm.$options.propsData || {}
-  const props = vm._props = {}
+  const propsData = vm.$options.propsData || {} // props具体的值
+  const props = vm._props = {} // 存放一下props
   // cache prop keys so that future props updates can iterate using Array
   // instead of dynamic object key enumeration.
   const keys = vm.$options._propKeys = []
-  const isRoot = !vm.$parent
+  const isRoot = !vm.$parent // 是否是根节点
   // root instance props should be converted
   if (!isRoot) {
-    toggleObserving(false)
+    toggleObserving(false) // 如果不是根组件，不将props作为响应式数据
   }
   for (const key in propsOptions) {
     keys.push(key)
@@ -105,6 +105,7 @@ function initProps (vm: Component, propsOptions: Object) {
     // during Vue.extend(). We only need to proxy props defined at
     // instantiation here.
     if (!(key in vm)) {
+      // 代理了一下 this._props[xxx] = this.xxx
       proxy(vm, `_props`, key)
     }
   }
@@ -264,7 +265,7 @@ function createGetterInvoker(fn) {
     return fn.call(this, this)
   }
 }
-
+// 判断了一些边界情况 主要是将method方法绑定在this上
 function initMethods (vm: Component, methods: Object) {
   const props = vm.$options.props
   for (const key in methods) {

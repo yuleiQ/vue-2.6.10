@@ -13,7 +13,8 @@ const idToTemplate = cached(id => {
   const el = query(id)
   return el && el.innerHTML
 })
-// 保存原来的$mount
+// 完整版
+// 将$mount方法缓存到mount变量上，保存原来的$mount
 const mount = Vue.prototype.$mount
 // 覆盖默认的$mount方法:处理template或el选项
 // 优先级是render=>template=>el

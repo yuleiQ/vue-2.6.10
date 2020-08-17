@@ -87,13 +87,13 @@ export function _createElement (
     data.scopedSlots = { default: children[0] }
     children.length = 0
   }
-  if (normalizationType === ALWAYS_NORMALIZE) {
+  if (normalizationType === ALWAYS_NORMALIZE) { // 手写render函数
     children = normalizeChildren(children)
-  } else if (normalizationType === SIMPLE_NORMALIZE) {
+  } else if (normalizationType === SIMPLE_NORMALIZE) { //编译render函数
     children = simpleNormalizeChildren(children)
   }
   let vnode, ns
-  if (typeof tag === 'string') {
+  if (typeof tag === 'string') { // 标签
     let Ctor
     ns = (context.$vnode && context.$vnode.ns) || config.getTagNamespace(tag)
     if (config.isReservedTag(tag)) {
@@ -122,6 +122,7 @@ export function _createElement (
     }
   } else {
     // direct component options / constructor
+    // 组件 tag:组件对象 context：当前vm实例
     vnode = createComponent(tag, data, context, children)
   }
   if (Array.isArray(vnode)) {
