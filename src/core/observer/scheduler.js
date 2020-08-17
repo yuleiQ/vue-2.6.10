@@ -81,18 +81,18 @@ function flushSchedulerQueue () {
   //    user watchers are created before the render watcher)
   // 3. If a component is destroyed during a parent component's watcher run,
   //    its watchers can be skipped.
-  queue.sort((a, b) => a.id - b.id)
+  queue.sort((a, b) => a.id - b.id) // watcher排除
 
   // do not cache length because more watchers might be pushed
   // as we run existing watchers
   for (index = 0; index < queue.length; index++) {
     watcher = queue[index]
-    if (watcher.before) {
-      watcher.before()
+    if (watcher.before) { // 渲染watcher独有属性
+      watcher.before() // 触发 beforeUpdate 钩子
     }
     id = watcher.id
     has[id] = null
-    watcher.run()
+    watcher.run() // 更新
     // in dev build, check and stop circular updates.
     if (process.env.NODE_ENV !== 'production' && has[id] != null) {
       circular[id] = (circular[id] || 0) + 1
@@ -161,13 +161,14 @@ function callActivatedHooks (queue) {
  * Jobs with duplicate IDs will be skipped unless it's
  * pushed when the queue is being flushed.
  */
+// 把将要执行更新的watcher收集到一个队列queue之内，保证如果同一个watcher内触发了多次更新，只会更新一次对应的watcher
 export function queueWatcher (watcher: Watcher) {
   const id = watcher.id
-  // 去重 不存在才入队
+  // 去重 不存在才入队!!!比如一个数据赋值100次，收集到同一个渲染Watcher,推入到队列中一次后就不会再添加了
   if (has[id] == null) {
-    has[id] = true
+    has[id] = true // 已经推入
     if (!flushing) {
-      queue.push(watcher)
+      queue.push(watcher) // 推入到队列
     } else {
       // if already flushing, splice the watcher based on its id
       // if already past its id, it will be run next immediately.

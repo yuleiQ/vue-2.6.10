@@ -135,7 +135,7 @@ export function observe (value: any, asRootData: ?boolean): Observer | void {
   if (asRootData && ob) {
     ob.vmCount++
   }
-  // 返回一个observer实例
+  // 返回一个observer实例,observe其实就是Observer这个类的工厂方法
   return ob
 }
 
@@ -149,7 +149,7 @@ export function defineReactive (
   customSetter?: ?Function,
   shallow?: boolean
 ) {
-  // key一一对应
+  // key一一对应 依赖管理器
   const dep = new Dep()
 
   const property = Object.getOwnPropertyDescriptor(obj, key)
@@ -164,6 +164,7 @@ export function defineReactive (
     val = obj[key]
   }
   // 属性拦截 只要对象类型 均会返回childOb
+  // Object.defineProperty中的get方法，它的作用就是谁访问到当前key的值就用defineReactive内的dep将它收集起来，即收集依赖
   let childOb = !shallow && observe(val)
   Object.defineProperty(obj, key, {
     enumerable: true,
@@ -185,9 +186,11 @@ export function defineReactive (
       }
       return value
     },
+    // set方法的作用就是当前key的值被赋值了,就通知dep内收集到的依赖项，key发生了变化，通知视图更新吧
     set: function reactiveSetter (newVal) {
       const value = getter ? getter.call(obj) : val
       /* eslint-disable no-self-compare */
+      // 新旧值相同，直接跳过
       if (newVal === value || (newVal !== newVal && value !== value)) {
         return
       }
@@ -200,7 +203,7 @@ export function defineReactive (
       if (setter) {
         setter.call(obj, newVal)
       } else {
-        val = newVal
+        val = newVal // 新值赋值给旧值
       }
       // 如果新值是对象 也要进行响应化
       childOb = !shallow && observe(newVal)

@@ -50,10 +50,11 @@ export default class Watcher {
     isRenderWatcher?: boolean
   ) {
     this.vm = vm
+    // 是否渲染watcher
     if (isRenderWatcher) {
-      vm._watcher = this
+      vm._watcher = this //  当前组件下挂载vm._watcher属性
     }
-    vm._watchers.push(this)
+    vm._watchers.push(this) // vm._watchers是之前初始化initState时定义的[]
     // options
     if (options) {
       this.deep = !!options.deep
@@ -76,8 +77,9 @@ export default class Watcher {
       ? expOrFn.toString()
       : ''
     // parse expression for getter
+    // 判断是否是函数
     if (typeof expOrFn === 'function') {
-      this.getter = expOrFn
+      this.getter = expOrFn // 直接赋值
     } else {
       this.getter = parsePath(expOrFn)
       if (!this.getter) {
@@ -92,18 +94,18 @@ export default class Watcher {
     }
     this.value = this.lazy
       ? undefined
-      : this.get()
+      : this.get() // 实例化就会执行this.get()方法
   }
 
   /**
    * Evaluate the getter, and re-collect dependencies.
    */
   get () {
-    pushTarget(this)
+    pushTarget(this) // 添加
     let value
     const vm = this.vm
     try {
-      value = this.getter.call(vm, vm)
+      value = this.getter.call(vm, vm) // 执行vm._update(vm._render())
     } catch (e) {
       if (this.user) {
         handleError(e, vm, `getter for watcher "${this.expression}"`)
@@ -116,7 +118,7 @@ export default class Watcher {
       if (this.deep) {
         traverse(value)
       }
-      popTarget()
+      popTarget() // 移除
       this.cleanupDeps()
     }
     return value
@@ -125,13 +127,14 @@ export default class Watcher {
   /**
    * Add a dependency to this directive.
    */
+  // 将当前watcher实例添加到dep内
   addDep (dep: Dep) {
     const id = dep.id
     if (!this.newDepIds.has(id)) {
       this.newDepIds.add(id)
       this.newDeps.push(dep)
       if (!this.depIds.has(id)) {
-        dep.addSub(this)
+        dep.addSub(this) // // 执行dep的addSub方法
       }
     }
   }

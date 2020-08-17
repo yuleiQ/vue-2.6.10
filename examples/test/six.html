@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="../../dist/vue.js"></script>
+</head>
+<body>
+  <div id="demo">
+    <h1>数据响应</h1>
+    {{info.name}}
+  </div>
+</body>
+<script>
+  const app = new Vue({
+    el: '#demo',
+    data: {
+      info: {
+        name: 'cc',
+        sex: 'women' // 即使是响应式数据，没被使用就不会进行依赖收集
+      }
+    }
+  })
+</script>
+</html>

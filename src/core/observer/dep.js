@@ -18,10 +18,10 @@ export default class Dep {
 
   constructor () {
     this.id = uid++
-    this.subs = []
+    this.subs = [] // 对象某个key的依赖集合
   }
 
-  addSub (sub: Watcher) {
+  addSub (sub: Watcher) { // 添加watcher实例到数组中
     this.subs.push(sub)
   }
 
@@ -30,11 +30,11 @@ export default class Dep {
   }
 
   depend () {
-    if (Dep.target) {
-      Dep.target.addDep(this)
+    if (Dep.target) { // 已经被赋值为了watcher的实例
+      Dep.target.addDep(this) // 执行watcher的addDep方法
     }
   }
-
+  // 通知
   notify () {
     // stabilize the subscriber list first
     const subs = this.subs.slice()
@@ -45,7 +45,7 @@ export default class Dep {
       subs.sort((a, b) => a.id - b.id)
     }
     for (let i = 0, l = subs.length; i < l; i++) {
-      subs[i].update()
+      subs[i].update() // 触发watch中的update
     }
   }
 }
@@ -53,15 +53,17 @@ export default class Dep {
 // The current target watcher being evaluated.
 // This is globally unique because only one watcher
 // can be evaluated at a time.
+// 定义一个Dep类的静态属性Dep.target为null，这是一个全局会用到的属性，保存的是当前组件对应渲染watcher的实例
 Dep.target = null
+// 组件从父到子对应的watcher实例集合
 const targetStack = []
 
 export function pushTarget (target: ?Watcher) {
-  targetStack.push(target)
-  Dep.target = target
+  targetStack.push(target) // 添加到集合里
+  Dep.target = target // 当前的watcher实例
 }
 
 export function popTarget () {
-  targetStack.pop()
-  Dep.target = targetStack[targetStack.length - 1]
+  targetStack.pop() // 移除数组的最后一项
+  Dep.target = targetStack[targetStack.length - 1]  // 赋值为数组最后一项
 }
