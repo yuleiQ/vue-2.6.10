@@ -1,8 +1,11 @@
 /* @flow */
 
 import he from 'he'
+// html解析器
 import { parseHTML } from './html-parser'
+// 文本解析器
 import { parseText } from './text-parser'
+// 过滤器解析
 import { parseFilters } from './filter-parser'
 import { genAssignmentCode } from '../directives/model'
 import { extend, cached, no, camelize, hyphenate } from 'shared/util'
@@ -93,7 +96,7 @@ export function parse (
   postTransforms = pluckModuleFunction(options.modules, 'postTransformNode')
 
   delimiters = options.delimiters
-
+  // 栈
   const stack = []
   const preserveWhitespace = options.preserveWhitespace !== false
   const whitespaceOption = options.whitespace
@@ -200,7 +203,7 @@ export function parse (
       )
     }
   }
-
+  // 解析html
   parseHTML(template, {
     warn,
     expectHTML: options.expectHTML,
@@ -210,6 +213,7 @@ export function parse (
     shouldDecodeNewlinesForHref: options.shouldDecodeNewlinesForHref,
     shouldKeepComment: options.comments,
     outputSourceRange: options.outputSourceRange,
+    // 遇到开始标签 执行start
     start (tag, attrs, unary, start, end) {
       // check namespace.
       // inherit parent ns if there is one
@@ -220,7 +224,7 @@ export function parse (
       if (isIE && ns === 'svg') {
         attrs = guardIESVGBug(attrs)
       }
-
+      // 遇到开始标签，就创建一个ast对象
       let element: ASTElement = createASTElement(tag, attrs, currentParent)
       if (ns) {
         element.ns = ns
@@ -263,7 +267,7 @@ export function parse (
       for (let i = 0; i < preTransforms.length; i++) {
         element = preTransforms[i](element, options) || element
       }
-
+      // 关键指令解析
       if (!inVPre) {
         processPre(element)
         if (element.pre) {
@@ -277,6 +281,7 @@ export function parse (
         processRawAttrs(element)
       } else if (!element.processed) {
         // structural directives
+        // v-for v-if指令
         processFor(element)
         processIf(element)
         processOnce(element)
@@ -296,7 +301,7 @@ export function parse (
         closeElement(element)
       }
     },
-
+    //  遇到结束标签 执行end
     end (tag, start, end) {
       const element = stack[stack.length - 1]
       // pop stack
