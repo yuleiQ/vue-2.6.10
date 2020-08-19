@@ -6,6 +6,7 @@
 import { def } from '../util/index'
 // 获取数组原型
 const arrayProto = Array.prototype
+ // 创建空对象拦截器
 export const arrayMethods = Object.create(arrayProto)
 // 7种数组方法
 const methodsToPatch = [
@@ -24,9 +25,10 @@ const methodsToPatch = [
  //  覆盖7个方法
 methodsToPatch.forEach(function (method) {
   // cache original method
+  // 过滤出7个数组原生原始方法
   const original = arrayProto[method]
   def(arrayMethods, method, function mutator (...args) {
-    // 执行原定的任务
+    // 执行原定的任务 this即为调用数组
     const result = original.apply(this, args)
     // 通知
     const ob = this.__ob__
@@ -43,7 +45,7 @@ methodsToPatch.forEach(function (method) {
     }
     if (inserted) ob.observeArray(inserted)
     // notify change
-    // 通知更新
+    // 触发手动依赖收集器内的依赖，通知更新
     ob.dep.notify()
     return result
   })

@@ -31,7 +31,7 @@ import {
 export const emptyNode = new VNode('', {}, [])
 
 const hooks = ['create', 'activate', 'update', 'remove', 'destroy']
-
+// 判断是否有相同的节点
 function sameVnode (a, b) {
   return (
     a.key === b.key && (
@@ -423,7 +423,7 @@ export function createPatchFunction (backend) {
     const canMove = !removeOnly
 
     if (process.env.NODE_ENV !== 'production') {
-      checkDuplicateKeys(newCh)
+      checkDuplicateKeys(newCh) //  检测newVnode的key是否有重复
     }
     // 循环条件 开始的索引不可以大于结束索引
     while (oldStartIdx <= oldEndIdx && newStartIdx <= newEndIdx) {
@@ -525,7 +525,7 @@ export function createPatchFunction (backend) {
     index,
     removeOnly
   ) {
-    if (oldVnode === vnode) {
+    if (oldVnode === vnode) { // 新旧相同 直接return
       return
     }
 
@@ -549,6 +549,7 @@ export function createPatchFunction (backend) {
     // note we only do this if the vnode is cloned -
     // if the new node is not cloned it means the render functions have been
     // reset by the hot-reload-api and we need to do a proper re-render.
+    // 静态节点
     if (isTrue(vnode.isStatic) &&
       isTrue(oldVnode.isStatic) &&
       vnode.key === oldVnode.key &&
@@ -826,7 +827,7 @@ export function createPatchFunction (backend) {
 
         // destroy old node
         // 销毁
-        if (isDef(parentElm)) {
+        if (isDef(parentElm)) { // 在它们的父节点内删除旧节点
           removeVnodes([oldVnode], 0, 0)
         } else if (isDef(oldVnode.tag)) {
           invokeDestroyHook(oldVnode)

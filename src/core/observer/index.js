@@ -15,7 +15,7 @@ import {
   isValidArrayIndex,
   isServerRendering
 } from '../util/index'
-
+//  获取拦截器内挂载好的七个方法key的数组集合，用于没有__proto__的情况
 const arrayKeys = Object.getOwnPropertyNames(arrayMethods)
 
 /**
@@ -34,7 +34,7 @@ export function toggleObserving (value: boolean) {
  * object's property keys into getter/setters that
  * collect dependencies and dispatch updates.
  */
-// 每个响应式对象都会有一个ob
+// 每个响应式对象都会有一个__ob__
 export class Observer {
   value: any;
   dep: Dep;
@@ -44,7 +44,7 @@ export class Observer {
     this.value = value
     // ??? 为什么声明Dep
     // object有新增或者删除属性、array数组中有变更方法
-    this.dep = new Dep()
+    this.dep = new Dep() // 手动依赖管理器
     this.vmCount = 0
     // 设置__ob__属性，引用当前Observer实例
     def(value, '__ob__', this)
@@ -52,8 +52,10 @@ export class Observer {
     if (Array.isArray(value)) {
       // 替换数组原型
       if (hasProto) {
+      // 使用数组原型覆盖
         protoAugment(value, arrayMethods)
       } else {
+        // 在当前调用数组下挂载拦截器里的异变数组方法
         copyAugment(value, arrayMethods, arrayKeys)
       }
       // 如果数组中的对象还是需要做响应化处理
@@ -120,6 +122,7 @@ export function observe (value: any, asRootData: ?boolean): Observer | void {
     return
   }
   // 观察者 已经存在就返回 否则创建新的
+  // 只要是响应式的数据就会有个__ob__属性，它是在Observer类中挂载的
   let ob: Observer | void
   if (hasOwn(value, '__ob__') && value.__ob__ instanceof Observer) {
     ob = value.__ob__
@@ -150,7 +153,7 @@ export function defineReactive (
   shallow?: boolean
 ) {
   // key一一对应 依赖管理器
-  const dep = new Dep()
+  const dep = new Dep() // 自动依赖管理器
 
   const property = Object.getOwnPropertyDescriptor(obj, key)
   if (property && property.configurable === false) {
@@ -165,7 +168,7 @@ export function defineReactive (
   }
   // 属性拦截 只要对象类型 均会返回childOb
   // Object.defineProperty中的get方法，它的作用就是谁访问到当前key的值就用defineReactive内的dep将它收集起来，即收集依赖
-  let childOb = !shallow && observe(val)
+  let childOb = !shallow && observe(val) // 返回Observer实例
   Object.defineProperty(obj, key, {
     enumerable: true,
     configurable: true,
@@ -174,13 +177,14 @@ export function defineReactive (
       const value = getter ? getter.call(obj) : val
       // 如果存在依赖
       if (Dep.target) {
-        // 收集依赖
+        // 自动依赖管理器收集依赖
         dep.depend()
         // 如果存在子ob 子ob也收集依赖
         if (childOb) {
-          childOb.dep.depend()
-          if (Array.isArray(value)) {
-            dependArray(value)
+          // 手动依赖管理器，收集依赖
+          childOb.dep.depend() 
+          if (Array.isArray(value)) { // 数组类型
+            dependArray(value)  // 将数组每一项包装为响应式
           }
         }
       }
@@ -232,8 +236,9 @@ export function set (target: Array<any> | Object, key: any, val: any): any {
     return val
   }
   // 对象
+  // 判断key是否属于target,属于的话就是赋值操作
   if (key in target && !(key in Object.prototype)) {
-    target[key] = val
+    target[key] = val // 触发set更新
     return val
   }
   const ob = (target: any).__ob__
@@ -244,12 +249,14 @@ export function set (target: Array<any> | Object, key: any, val: any): any {
     )
     return val
   }
+  // 不是响应式数据，那就是普通对象呗，设置对应key
   if (!ob) {
     target[key] = val
     return val
   }
+  // 以上都不满足说明新增属性 把新增的转为响应式数据 通知手动依赖器派发更新
   defineReactive(ob.value, key, val)
-  // 通知组件更新
+  // 手动触发，通知组件更新
   ob.dep.notify()
   return val
 }

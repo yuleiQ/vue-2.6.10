@@ -1,6 +1,7 @@
 /* @flow */
 
 // can we use __proto__?
+// 快速判断当前浏览浏览器是否IE10以上
 export const hasProto = '__proto__' in {}
 
 // Browser environment sniffing

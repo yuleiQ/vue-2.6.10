@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>虚拟dom</title>
+    <script src="../../dist/vue.js"></script>
+</head>
+
+<body>
+    <div id="demo">
+        <h1>虚拟DOM</h1>
+        <div>
+            <p v-for='item in list' :key='item.id'>{{item.name}}</p>
+        </div>
+    </div>
+    <script>
+        // 创建实例
+        const app = new Vue({
+            el: '#demo',
+            data: { 
+                list: [{
+                    id: 'a1',name: 'A'}, {
+                    id: 'b2',name: 'B'}, {
+                    id: 'c3',name: 'C'}, {
+                    id: 'd4',name: 'D'}
+                ]
+            },
+            mounted() {
+                setTimeout(() => {
+                    this.list.sort(() => Math.random() - .5)
+                        .unshift({id: 'e5', name: 'E'})
+                    }, 1000)
+            }
+        });
+    </script>
+</body>
+
+</html>
