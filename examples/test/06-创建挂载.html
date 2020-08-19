@@ -9,9 +9,7 @@
 </head>
 <body>
   <div id="demo">
-    <!-- 出现静态节点嵌套情况下会做优化标记 -->
-    <h1>Vue<span>模板编译</span></h1>
-    <p>{{foo}}</p>
+    <h1>Vue<span>组件实例创建及挂载</span></h1>
     <comp></comp>
 </div>
 <script>
@@ -21,11 +19,8 @@
     // 创建实例
     const app = new Vue({
         el: '#demo',
-        data: {foo:'foo'}
     });
-    // 输出render函数
-    console.log(app.$options.render);
-    
+    // 跑一遍debugger啊啊啊啊啊啊
 </script>
 
 </body>
