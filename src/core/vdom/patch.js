@@ -70,7 +70,7 @@ function createKeyToOldIdx (children, beginIdx, endIdx) {
 export function createPatchFunction (backend) {
   let i, j
   const cbs = {}
-
+   // 解构出传入的集合
   const { modules, nodeOps } = backend
   // 循环modules
   for (i = 0; i < hooks.length; ++i) {
@@ -123,7 +123,7 @@ export function createPatchFunction (backend) {
   }
 
   let creatingElmInVPre = 0
-
+  // 组件或者元素的创建 
   function createElm (
     vnode,
     insertedVnodeQueue,
@@ -151,6 +151,7 @@ export function createPatchFunction (backend) {
     const data = vnode.data
     const children = vnode.children
     const tag = vnode.tag
+    // 元素节点
     if (isDef(tag)) {
       if (process.env.NODE_ENV !== 'production') {
         if (data && data.pre) {
@@ -168,7 +169,7 @@ export function createPatchFunction (backend) {
 
       vnode.elm = vnode.ns
         ? nodeOps.createElementNS(vnode.ns, tag)
-        : nodeOps.createElement(tag, vnode)
+        : nodeOps.createElement(tag, vnode)       // 创建父节点
       setScope(vnode)
 
       /* istanbul ignore if */
@@ -183,12 +184,12 @@ export function createPatchFunction (backend) {
           }
           insert(parentElm, vnode.elm, refElm)
         }
-        createChildren(vnode, children, insertedVnodeQueue)
+        createChildren(vnode, children, insertedVnodeQueue)  // 创建父节点
         if (appendAsTree) {
           if (isDef(data)) {
             invokeCreateHooks(vnode, insertedVnodeQueue)
           }
-          insert(parentElm, vnode.elm, refElm)
+          insert(parentElm, vnode.elm, refElm)  // 创建父节点
         }
       } else {
         createChildren(vnode, children, insertedVnodeQueue)
@@ -201,12 +202,14 @@ export function createPatchFunction (backend) {
       if (process.env.NODE_ENV !== 'production' && data && data.pre) {
         creatingElmInVPre--
       }
+    // 注释节点
     } else if (isTrue(vnode.isComment)) {
-      vnode.elm = nodeOps.createComment(vnode.text)
-      insert(parentElm, vnode.elm, refElm)
+      vnode.elm = nodeOps.createComment(vnode.text)// 创建注释节点
+      insert(parentElm, vnode.elm, refElm)// 插入到父节点
+    // 文本节点
     } else {
-      vnode.elm = nodeOps.createTextNode(vnode.text)
-      insert(parentElm, vnode.elm, refElm)
+      vnode.elm = nodeOps.createTextNode(vnode.text) // 创建文本节点
+      insert(parentElm, vnode.elm, refElm) // 创建文本节点
     }
   }
   // 这里的createComponent是把前面那个执行的结果转换为真实的dom
@@ -214,8 +217,9 @@ export function createPatchFunction (backend) {
     // 获取管理钩子函数
     let i = vnode.data
     if (isDef(i)) {
+       // 缓存情况， 会看实例是否已经存在，keepAlive的情况 
       const isReactivated = isDef(vnode.componentInstance) && i.keepAlive
-       // 存在init钩子，则执行之创建实例并挂载
+       // 存在init钩子，则调用init钩子 创建实例并挂载
       if (isDef(i = i.hook) && isDef(i = i.init)) {
         i(vnode, false /* hydrating */)
       }
@@ -223,6 +227,7 @@ export function createPatchFunction (backend) {
       // it should've created a child instance and mounted it. the child
       // component also has set the placeholder vnode's elm.
       // in that case we can just return the element and be done.
+      // 上面创建已经完成，组件实例已经存在了
       // 如果组件实例存在
       if (isDef(vnode.componentInstance)) {
         // init  
@@ -745,7 +750,7 @@ export function createPatchFunction (backend) {
 
     let isInitialPatch = false
     const insertedVnodeQueue = []
-    // 如果老vdom树不存在，锌层
+    // 如果老vdom树不存在，创建
     if (isUndef(oldVnode)) {
       // empty mount (likely as component), create new root element
       isInitialPatch = true

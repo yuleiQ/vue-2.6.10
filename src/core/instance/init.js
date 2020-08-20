@@ -29,6 +29,7 @@ export function initMixin (Vue: Class<Component>) {
     // a flag to avoid this being observed
     vm._isVue = true
     // merge options
+    // 组件的合并options，_isComponent为之前定义的标记位
     if (options && options._isComponent) {
       // optimize internal component instantiation
       // since dynamic options merging is pretty slow, and none of the
@@ -72,6 +73,7 @@ export function initMixin (Vue: Class<Component>) {
       measure(`vue ${vm._name} init`, startTag, endTag)
     }
     // 组件的挂载
+    // 由于组件是没有el属性的 所以不执行挂载
     if (vm.$options.el) {
       vm.$mount(vm.$options.el)
     }

@@ -23,6 +23,7 @@ export let isUpdatingChildComponent: boolean = false
 
 export function setActiveInstance(vm: Component) {
   const prevActiveInstance = activeInstance
+  // activeInstance值为当前实例
   activeInstance = vm
   return () => {
     activeInstance = prevActiveInstance
@@ -215,6 +216,7 @@ export function mountComponent (
   // mounted is called for render-created child components in its inserted hook
   if (vm.$vnode == null) {
     vm._isMounted = true
+    // 
     callHook(vm, 'mounted')
   }
   return vm

@@ -293,7 +293,7 @@ export function parse (
           checkRootConstraints(root)
         }
       }
-
+      // 判断是否是自闭和标签，如果不是，则将element push到栈中
       if (!unary) {
         currentParent = element
         stack.push(element)

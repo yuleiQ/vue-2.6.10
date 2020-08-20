@@ -50,7 +50,7 @@ const componentVNodeHooks = {
         vnode,
         activeInstance
       )
-      // 组件实例建完成并挂载（这就说明了挂载为何自下而上）
+      // 组件实例建完成并挂载
       child.$mount(hydrating ? vnode.elm : undefined, hydrating)
     }
   },
@@ -154,7 +154,7 @@ export function createComponent (
   resolveConstructorOptions(Ctor)
 
   // transform component v-model data into props & events
-  // v-model处理
+  //  双向绑定的数据处理  
   if (isDef(data.model)) {
     transformModel(Ctor.options, data)
   }
@@ -169,6 +169,7 @@ export function createComponent (
 
   // extract listeners, since these needs to be treated as
   // child component listeners instead of DOM listeners
+  // 事件监听
   const listeners = data.on
   // replace with listeners with .native modifier
   // so it gets processed during parent component patch.
@@ -217,8 +218,8 @@ export function createComponentInstanceForVnode (
 ): Component {
   const options: InternalComponentOptions = {
     _isComponent: true,
-    _parentVnode: vnode,
-    parent
+    _parentVnode: vnode, // 设置一个标记位，表明是组件
+    parent// 子组件的父vm实例，让初始化initLifecycle可以建立父子关系
   }
   // check inline-template render functions
   const inlineTemplate = vnode.data.inlineTemplate
@@ -226,8 +227,10 @@ export function createComponentInstanceForVnode (
     options.render = inlineTemplate.render
     options.staticRenderFns = inlineTemplate.staticRenderFns
   }
+  // 子组件的构造函数定义为Ctor
   return new vnode.componentOptions.Ctor(options)
 }
+// 给data中添加一些钩子函数，未来等待patch的时候调用 
 // 合并操作，用户也可能传递钩子，所以会整合
 function installComponentHooks (data: VNodeData) {
   const hooks = data.hook || (data.hook = {})

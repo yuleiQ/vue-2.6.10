@@ -9,8 +9,9 @@
 <body>
     <div id="demo">
         <h1>Vue模板<span>编译</span></h1>
-        <p v-if="foo">{{foo}}</p>
-        <comp></comp>
+        <!-- <p v-if="foo">{{foo}}</p> -->
+        <!-- <comp></comp> -->
+        <p v-for="item in items">{{item}}</p>
     </div>
     <script>
         Vue.component('comp', {
@@ -19,7 +20,10 @@
         // 创建实例
         const app = new Vue({
             el: '#demo',
-            data: {foo:'foo'}
+            data: {
+                foo:'foo',
+                items: [1,2,3]
+            }
         });
         // 输出render函数
         console.log(app.$options.render);
