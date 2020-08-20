@@ -143,10 +143,11 @@ export function createPatchFunction (backend) {
     }
 
     vnode.isRootInsert = !nested // for transition enter check
+    // 如果要创建的是组件，走下面的流程
     if (createComponent(vnode, insertedVnodeQueue, parentElm, refElm)) {
       return
     }
-
+    // 原生标签创建
     const data = vnode.data
     const children = vnode.children
     const tag = vnode.tag
@@ -208,11 +209,13 @@ export function createPatchFunction (backend) {
       insert(parentElm, vnode.elm, refElm)
     }
   }
-
+  // 这里的createComponent是把前面那个执行的结果转换为真实的dom
   function createComponent (vnode, insertedVnodeQueue, parentElm, refElm) {
+    // 获取管理钩子函数
     let i = vnode.data
     if (isDef(i)) {
       const isReactivated = isDef(vnode.componentInstance) && i.keepAlive
+       // 存在init钩子，则执行之创建实例并挂载
       if (isDef(i = i.hook) && isDef(i = i.init)) {
         i(vnode, false /* hydrating */)
       }
@@ -220,8 +223,12 @@ export function createPatchFunction (backend) {
       // it should've created a child instance and mounted it. the child
       // component also has set the placeholder vnode's elm.
       // in that case we can just return the element and be done.
+      // 如果组件实例存在
       if (isDef(vnode.componentInstance)) {
+        // init  
+        // 属性初始化
         initComponent(vnode, insertedVnodeQueue)
+        // dom插入 此处界面仍看不到
         insert(parentElm, vnode.elm, refElm)
         if (isTrue(isReactivated)) {
           reactivateComponent(vnode, insertedVnodeQueue, parentElm, refElm)
@@ -549,7 +556,7 @@ export function createPatchFunction (backend) {
     // note we only do this if the vnode is cloned -
     // if the new node is not cloned it means the render functions have been
     // reset by the hot-reload-api and we need to do a proper re-render.
-    // 静态节点
+    // 静态节点判断，如果是静态就直接复用并return
     if (isTrue(vnode.isStatic) &&
       isTrue(oldVnode.isStatic) &&
       vnode.key === oldVnode.key &&

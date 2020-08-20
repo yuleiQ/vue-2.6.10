@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <title>Vue源码剖析</title>
+  <script src="../../dist/vue.js"></script>
+</head>
+<body>
+  <div id="demo">
+    <h1>Vue<span>组件实例创建及挂载</span></h1>
+    <comp></comp>
+</div>
+<script>
+    Vue.component('comp', {
+        template: '<div>I am comp</div>'
+    })
+    // 创建实例
+    const app = new Vue({
+        el: '#demo',
+    });
+    // 跑一遍debugger啊啊啊啊啊啊
+</script>
+
+</body>
+</html>
