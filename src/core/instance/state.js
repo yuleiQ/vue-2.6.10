@@ -46,7 +46,7 @@ export function proxy (target: Object, sourceKey: string, key: string) {
 }
 
 export function initState (vm: Component) {
-  vm._watchers = []
+  vm._watchers = [] // 当前实例watcher集合
   const opts = vm.$options
   // 属性初始化
   if (opts.props) initProps(vm, opts.props)
@@ -59,7 +59,7 @@ export function initState (vm: Component) {
   }
   if (opts.computed) initComputed(vm, opts.computed)
   if (opts.watch && opts.watch !== nativeWatch) {
-    initWatch(vm, opts.watch)
+    initWatch(vm, opts.watch) // 初始化watch
   }
 }
 
@@ -191,6 +191,7 @@ function initComputed (vm: Component, computed: Object) {
 
     if (!isSSR) {
       // create internal watcher for the computed property.
+      // 实例化computed-watcher
       watchers[key] = new Watcher(
         vm,
         getter || noop,
@@ -297,12 +298,12 @@ function initMethods (vm: Component, methods: Object) {
 function initWatch (vm: Component, watch: Object) {
   for (const key in watch) {
     const handler = watch[key]
-    if (Array.isArray(handler)) {
+    if (Array.isArray(handler)) { // 如果该项的值为数组
       for (let i = 0; i < handler.length; i++) {
-        createWatcher(vm, key, handler[i])
+        createWatcher(vm, key, handler[i]) // 将每一项使用watcher包装
       }
     } else {
-      createWatcher(vm, key, handler)
+      createWatcher(vm, key, handler) // 不是数组直接使用watcher
     }
   }
 }

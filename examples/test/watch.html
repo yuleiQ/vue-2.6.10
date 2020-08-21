@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="../../dist/vue.js"></script>
+</head>
+
+<body>
+    <div id="demo"></div> 
+</body>
+<script>
+    const app = new Vue({
+      el: '#demo',
+      data: {
+        info: {
+           name: 'cc'
+        }
+      },
+      created() {
+          this.$watch('info.name', newName => {
+            console.log(newName)
+          })  
+        }
+    })
+  </script>
+</html>

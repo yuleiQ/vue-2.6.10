@@ -54,7 +54,7 @@ export default class Watcher {
     if (isRenderWatcher) {
       vm._watcher = this //  当前组件下挂载vm._watcher属性
     }
-    vm._watchers.push(this) // vm._watchers是之前初始化initState时定义的[]
+    vm._watchers.push(this) // vm._watchers是之前初始化initState时定义的[],添加到当前实例的watchers内
     // options
     if (options) {
       this.deep = !!options.deep
@@ -81,6 +81,7 @@ export default class Watcher {
     if (typeof expOrFn === 'function') {
       this.getter = expOrFn // 直接赋值
     } else {
+      // 返回一个闭包
       this.getter = parsePath(expOrFn)
       if (!this.getter) {
         this.getter = noop
@@ -105,6 +106,7 @@ export default class Watcher {
     let value
     const vm = this.vm
     try {
+      // 将vm实例传给闭包，进行读取操作
       value = this.getter.call(vm, vm) // 执行vm._update(vm._render())
     } catch (e) {
       if (this.user) {
@@ -164,7 +166,7 @@ export default class Watcher {
    * Subscriber interface.
    * Will be called when a dependency changes.
    */
-  update () {
+  update () { // 执行派发更新
     /* istanbul ignore else */
     if (this.lazy) {
       this.dirty = true
